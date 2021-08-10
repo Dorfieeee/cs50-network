@@ -1,0 +1,18 @@
+<form id="newPostForm" class="mb-5">
+    <div class="mb-3">
+        <label for="postBody" class="form-label"><span class="visually-hidden">New tweet<span></label>
+        <textarea
+            class="form-control"
+            id="postBody"
+            name="post_body"
+            rows="3"
+        ></textarea>
+    </div>
+    <button type="submit" class="btn btn-sm btn-primary">Peep it!</button>
+</form>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const newPostForm = document.getElementById("newPostForm");
+        newPostForm.addEventListener("submit", submitNewPost, false);
+    })
+</script>

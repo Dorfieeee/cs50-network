@@ -1,0 +1,82 @@
+<div class="card">
+    <div class="row gx-0">
+        {% comment %} CARD LEFT START {% endcomment %}
+        <div class="col-auto d-flex justify-content-center" style="width: 4em">
+            <i class="fas fa-user-circle fa-3x my-2"></i>
+        </div>
+        {% comment %} CARD LEFT END {% endcomment %}
+
+        {% comment %} CARD RIGHT START {% endcomment %}
+        <div class="col px-2">
+            {% comment %} HEADER START {% endcomment %}
+            <div class="py-1 d-flex align-items-center">            
+                <a class="link-dark fw-bold" href="{{ post.profileURL }}">
+                    {{ post.author.username }}
+                </a>
+                <span class="card-title-divider text-muted"></span>
+                <a
+                    href="#"
+                    class="link-dark text-muted"
+                    data-bs-toggle="tooltip"
+                    data-bs-html="true"
+                    title="<b>{{ post.created.long }}</b>"
+                >
+                    {{ post.created.short }}
+                </a>
+                <span class="spacer"></span>
+                {% if post.userIsAuthor %}
+                <span class="dropdown">
+                    <button
+                        class="btn btn-sm"
+                        type="button"
+                        id="postOptions{{post.id}}"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                    >
+                        <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="postOptions{{post.id}}">
+                        <li>
+                            <a class="dropdown-item" href="#" onclick='editPost(event, "{{post.postURL}}", {{post.id}})' >Edit</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="#" onclick='deletePost("{{post.postURL}}", {{post.id}})' >Delete</a>
+                        </li>
+                    </ul>
+                </span>
+                {% endif %}
+            </div>
+            {% comment %} HEADER END {% endcomment %}
+
+            {% comment %} BODY START {% endcomment %}
+            <div class="py-1">
+                <p class="card-text">{{ post.body }}</p>
+            </div>
+            {% comment %} BODY END {% endcomment %}
+            
+
+            {% comment %} FOOTER START {% endcomment %}
+            <form class="py-1" onsubmit='likePost(event, "{{post.likeURL}}", {{post.id}})'>                     
+                    <button
+                        type="button"
+                        onclick='likePost(event, "{{post.likeURL}}", {{post.id}})'
+                        class="btn btn-sm rounded-circle text-danger"
+                        data-like-url={{post.likeURL}}
+                        data-post-id={{post.id}}
+                        data-user-like={% if post.userLikesThis %}"true"{% else %}"false"{% endif %} {% if post.userIsAuthor %}disabled{% endif %}>
+                    </button>
+                    <input type="submit" hidden />
+                    <span class="card-text mr-2">
+                        <small class="text-muted" data-like-count={{ post.numberOfLikes }}>
+                            {{ post.numberOfLikes }}
+                        </small>
+                        <small class="text-muted">
+                            like{{ post.numberOfLikes|pluralize }}
+                        </small>
+                    </span>
+            </form>
+            {% comment %} FOOTER END {% endcomment %}
+        </div>
+        {% comment %} CARD RIGHT END {% endcomment %}
+    </div>    
+</div>
