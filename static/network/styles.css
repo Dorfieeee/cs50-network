@@ -1,0 +1,24 @@
+.card-title-divider::after {
+    content: "•";
+    margin: 0 4px;
+}
+
+.spacer {
+    flex-grow: 1;
+}
+
+button[data-like="true"]::after {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    font-style: solid;
+    color: red;
+    content: "\f004";
+}
+
+button[data-like="false"]::after {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    font-style: solid;
+    color: grey;
+    content: "\f004";
+}
