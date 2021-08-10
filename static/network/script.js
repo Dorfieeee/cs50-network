@@ -11,7 +11,7 @@ function displayPosts(posts) {
 }
 
 async function getPosts(params = {}, url) {
-    const URL = url || "api/posts";
+    const URL = url || "/api/posts";
     const PARAMS = getQueryFrom(params);
     const SLASH = url ? "" : PARAMS ? "" : "/";
     const response = await fetch(URL + SLASH + PARAMS);
@@ -105,7 +105,7 @@ async function submitNewPost(e) {
     // silently abort
     if (postBody.value === "") return;
 
-    const response = await fetch("api/posts/", {
+    const response = await fetch("/api/posts/", {
         method: "POST", // *GET, POST, PUT, DELETE, etc.
         headers: {
             "Content-Type": "application/json",
@@ -497,7 +497,7 @@ async function followUser(e) {
     let method = action === "follow" ? "POST" : action === "unfollow" ? "DELETE" : "";
     if (!method || !username) return;
 
-    let response = await fetch("api/followers/" + username + "/", {
+    let response = await fetch("/api/followers/" + username + "/", {
         method: method,
         cache: "no-cache",
         headers: {
