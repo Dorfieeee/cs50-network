@@ -41,7 +41,7 @@ class Profile(models.Model):
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
     if created:
-        slug = reverse("network:profile-detail", kwargs={"slug": instance.username})
+        slug = instance.username
         Profile.objects.create(user=instance, slug=slug)
     pass
 
