@@ -49,7 +49,7 @@
                     <a
                         class="nav-link"
                         style="display: inline-block"
-                        href="{{ url 'network:profile-detail' user.profile.slug }}"
+                        href="{% url 'network:profile-detail' user.profile.slug %}"
                     >
                         {% if user.profile.avatar_slug %}
                         <img
