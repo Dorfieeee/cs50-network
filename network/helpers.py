@@ -44,7 +44,7 @@ def get_posts(user, *args, **kwargs):
             "userLikesThis": does_user_like_it,
             "postURL": reverse("network-api:post-detail-api", args=[post.id]),
             "likeURL": reverse("network-api:post-like-api", args=[post.id]),
-            "profileURL": post.author.profile.slug,
+            "profileURL": reverse("network:profile-detail", args=[post.author.profile.slug]),
             })
 
     return posts

@@ -54,7 +54,7 @@
                         {% if user.profile.avatar_slug %}
                         <img
                             style="display: inline-block"
-                            src="{{ user.profile.avatar_slug }}"
+                            src="{{ url 'network:profile-detail' user.profile.avatar_slug }}"
                             width="45px"
                             height="45px"
                             alt="{{ user.username }}'s profile picture"
