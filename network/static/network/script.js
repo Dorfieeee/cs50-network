@@ -123,7 +123,7 @@ async function submitNewPost(e) {
 }
 
 function PostCard(post) {
-    let card, row, avatarCol, avatar, contentCol;
+    let card, row, avatarCol, avatar, avatarLink, contentCol;
 
     card = document.createElement("div");
     card.classList.add("card");
@@ -136,10 +136,21 @@ function PostCard(post) {
     avatarCol.classList.add("col-auto", "d-flex", "justify-content-center");
     avatarCol.style.width = "4em";
 
-    avatar = document.createElement("i");
-    avatar.classList.add("fas", "fa-user-circle", "fa-3x", "my-2");
+    avatarLink = document.createElement("a");
+    avatarLink.classList.add("my-2");
+    avatarLink.href = post.profileURL;
+    avatarLink.style.width = "45px";
+    avatarLink.style.height = "45px";
 
-    avatarCol.append(avatar);
+    avatar = document.createElement("img");
+    avatar.classList.add("rounded-circle");
+    avatar.src = post.author.avatar;
+    avatar.alt = `${post.author.username}'s profile picture`;
+    avatar.width = "45";
+    avatar.height = "45";
+
+    avatarLink.append(avatar)
+    avatarCol.append(avatarLink);
 
     contentCol = document.createElement("div");
     contentCol.classList.add("col", "px-2");
