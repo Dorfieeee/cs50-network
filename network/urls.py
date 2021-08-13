@@ -12,7 +12,7 @@ urlpatterns = [
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
-    path("<slug:slug>", login_required(views.ProfileDetailView.as_view()), name="profile-detail"),
-    path("<slug:slug>/image", login_required(views.ProfileImage.as_view()), name="profile-image"),
+    path("user/<slug:slug>", login_required(views.ProfileDetailView.as_view()), name="profile-detail"),
+    path("/user/<slug:slug>/image", login_required(views.ProfileImage.as_view()), name="profile-image"),
     path("", views.index, name="index"),
 ]

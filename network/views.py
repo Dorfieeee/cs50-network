@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.views.generic.detail import DetailView
 from django.views import View
 
-from .helpers import get_posts, is_valid_or_error, get_object_or_false, parseParams
+from .helpers import is_valid_or_error
 from .models import Profile, User
 
 def index(request):
@@ -71,6 +71,11 @@ def register(request):
                 "message": "Passwords must match."
             })
 
+        if not username or not email or not password or not confirmation:
+            return render(request, "network/register.html", {
+                "message": "All fields must be filled."
+            })
+
         # Attempt to create new user
         try:
             user = User.objects.create_user(username, email, password)
@@ -95,7 +100,20 @@ class ProfileDetailView(DetailView):
         context['follows'] = [relation.followee for relation in context["profile"].user.follows.all()]
         return context
 
+
 class ProfileImage(View):
+
+    def delete(self, request, slug):
+        profile = Profile.objects.filter(slug=slug)
+        if profile.exists():
+            profile = profile.first()
+            if request.user == profile.user:
+                profile.avatar_slug = ""
+                profile.save()
+                return JsonResponse({"msg": "User's profile was successfully updated"})
+            return JsonResponse({"error": "User can only update own profile"}, status=401)
+        return JsonResponse({"error": "Profile to be updated does not exist"}, status=400)
+
 
     def put(self, request, slug):
         reqBody = json.loads(request.body)

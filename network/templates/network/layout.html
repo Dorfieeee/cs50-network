@@ -27,20 +27,18 @@
     </head>
     <body>
         <nav class="navbar navbar-expand-lg navbar-light bg-light px-3 mb-3">
-            <a class="navbar-brand" href="/">Peeper</a>
+            <a class="navbar-brand" href="{% url 'network:index' %}">Peeper</a>
 
-            <ul class="navbar-nav mr-auto w-100">
+            <ul class="navbar-nav mr-auto w-100 align-items-center">
 
                 <li class="spacer"></li>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'network:index' %}"
-                        >All Posts</a
-                    >
-                </li>
                 {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link" href="following">Following</a>
+                    <a class="nav-link" href="{% url 'network:index' %}">All Posts</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'network:following' %}">Following</a>
                 </li>
 
                 <li class="spacer"></li>
@@ -49,14 +47,14 @@
                     <a
                         class="nav-link"
                         style="display: inline-block"
-                        href="/{{ user.username }}"
+                        href="{% url 'network:profile-detail' user.profile.slug %}"
                     >
                         {% if user.profile.avatar_url %}
                         <img
                             style="display: inline-block"
                             src="{{ user.profile.avatar_url }}"
-                            width="25px"
-                            height="25px"
+                            width="32px"
+                            height="32px"
                             alt="{{ user.username }}'s profile picture"
                             class="rounded-circle"
                         />
@@ -71,15 +69,16 @@
                     >
                 </li>
                 {% else %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'network:login' %}"
-                        >Log In</a
-                    >
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'network:register' %}"
-                        >Register</a
-                    >
+                
+
+                <li class="nav-item dropdown dropstart">
+                    <a href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle fa-2x"></i>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <li><a class="dropdown-item" href="{% url 'network:login' %}">Log In</a></li>
+                        <li><a class="dropdown-item" href="{% url 'network:register' %}">Register</a></li>
+                    </ul>
                 </li>
                 {% endif %}
             </ul>

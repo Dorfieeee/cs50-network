@@ -11,7 +11,7 @@ function displayPosts(posts) {
 }
 
 async function getPosts(params = {}, url) {
-    const URL = url || "api/posts";
+    const URL = url || "/api/posts";
     const PARAMS = getQueryFrom(params);
     const SLASH = url ? "" : PARAMS ? "" : "/";
     const response = await fetch(URL + SLASH + PARAMS);
@@ -102,10 +102,10 @@ async function submitNewPost(e) {
 
     const postBody = document.getElementById("postBody");
 
-    // silently abort if "empty string" posted
+    // silently abort
     if (postBody.value === "") return;
 
-    const response = await fetch("api/posts/", {
+    const response = await fetch("/api/posts/", {
         method: "POST", // *GET, POST, PUT, DELETE, etc.
         headers: {
             "Content-Type": "application/json",
@@ -123,7 +123,7 @@ async function submitNewPost(e) {
 }
 
 function PostCard(post) {
-    let card, row, avatarCol, avatar, contentCol, avatarLink;
+    let card, row, avatarCol, avatar, contentCol;
 
     card = document.createElement("div");
     card.classList.add("card");
@@ -136,24 +136,10 @@ function PostCard(post) {
     avatarCol.classList.add("col-auto", "d-flex", "justify-content-center");
     avatarCol.style.width = "4em";
 
-    avatarLink = document.createElement("a");
-    avatarLink.href = post.profileURL;
-    avatarLink.classList.add("card-avatar", "link-secondary")
+    avatar = document.createElement("i");
+    avatar.classList.add("fas", "fa-user-circle", "fa-3x", "my-2");
 
-    if (post.author.avatar) {
-        avatar = document.createElement("img");
-        avatar.src = post.author.avatar;
-        avatar.classList.add("rounded-circle", "my-2");
-        avatar.width = "45";
-        avatar.height = "45";
-        avatar.alt = post.author.username + "'s profile picture";
-    } else {
-        avatar = document.createElement("i");
-        avatar.classList.add("fas", "fa-user-circle", "fa-3x");
-    }
-
-    avatarLink.append(avatar);
-    avatarCol.append(avatarLink);
+    avatarCol.append(avatar);
 
     contentCol = document.createElement("div");
     contentCol.classList.add("col", "px-2");
@@ -507,11 +493,11 @@ async function loadPosts(currPage, setCurrPage, params, url) {
 async function followUser(e) {
     let action = e.target.dataset.action;
     let username = e.target.dataset.username;
-    let method =
-        action === "follow" ? "POST" : action === "unfollow" ? "DELETE" : "";
+    console.log(action, username);
+    let method = action === "follow" ? "POST" : action === "unfollow" ? "DELETE" : "";
     if (!method || !username) return;
 
-    let response = await fetch("api/followers/" + username + "/", {
+    let response = await fetch("/api/followers/" + username + "/", {
         method: method,
         cache: "no-cache",
         headers: {
@@ -519,7 +505,7 @@ async function followUser(e) {
             "Content-Length": "0", // no body to be sent
             "X-CSRFToken": Cookies.get("csrftoken"),
         },
-    });
+    })
 
     if (response.ok) {
         location.reload();

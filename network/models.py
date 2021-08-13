@@ -32,7 +32,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=CASCADE, primary_key=True)
     slug = models.SlugField("profile url")
     dob = models.DateTimeField('date of birth', null=True, blank=True)
-    avatar_url = models.URLField("profile img url", null=True, blank=True)
+    avatar_url = models.URLField("profile img url", null=True, blank=True, default="https://i.ibb.co/Y8DFbBv/mee6.png")
 
     def __str__(self) -> str:
         return self.user.email
@@ -41,8 +41,7 @@ class Profile(models.Model):
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
     if created:
-        slug = reverse("network:profile-detail", kwargs={"slug": instance.username})
-        Profile.objects.create(user=instance, slug=slug)
+        Profile.objects.create(user=instance, slug=instance.username)
     pass
 
 

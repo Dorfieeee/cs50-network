@@ -2,13 +2,15 @@
 
 {% block body %}
 
-    <h2>Register</h2>
+    <div class="col-4 mx-auto">
+
+    <h2 class="text-center" >Register</h2>
 
     {% if message %}
         <div>{{ message }}</div>
     {% endif %}
 
-    <form action="{% url 'network:register' %}" method="post">
+    <form action="{% url 'network:register' %}" method="post" class="vstack gap-1 my-2">
         {% csrf_token %}
         <div class="form-group">
             <input class="form-control" autofocus type="text" name="username" placeholder="Username">
@@ -27,4 +29,5 @@
 
     Already have an account? <a href="{% url 'network:login' %}">Log In here.</a>
 
+    </div>
 {% endblock %}
