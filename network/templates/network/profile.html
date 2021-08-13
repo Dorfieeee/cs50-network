@@ -4,8 +4,27 @@
 {% block body %}
     <div class="row cols-1 justify-content-center">
         <div class="col-8">
-            <div class="vstack gap-1 mx-auto text-center">
-                <i class="fas fa-user-circle fa-5x"></i>
+            <div class="vstack gap-1 mx-auto text-center align-items-center">
+            {% comment %}  {% endcomment %}
+                {% comment %} Profile image wrapper {% endcomment %}
+                <div class="profile-img-wrapper">
+                    {% comment %} User's avatar {% endcomment %}                    
+                    <img 
+                    class="rounded-circle"
+                    src={% if object.user.profile.avatar_url %} "{{ object.user.profile.avatar_url }}" {% else %} "https://i.ibb.co/LYx289M/octopus-colored.jpg" {% endif %}
+                    width="280px" 
+                    height="280px" 
+                    alt="{{ object.user.username }}'s profile picture" 
+                    />
+                    {% comment %} Add new URL img overlay {% endcomment %}
+                    {% if object.user == user %}
+                    <div class="profile-img-overlay">
+                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modal">
+                            Add custom image
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
                 <h3>
                 {% if object.user.first_name and object.user.last_name %}
                     {{ object.user.first_name }} '{{ object.user.username }}' {{ object.user.last_name }}
@@ -52,6 +71,38 @@
             </div>
         </div>
     </div>
+    {% comment %} MODAL {% endcomment %}
+    {% if object.user == user %}
+    <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="profileImgModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="profileImgModal">Insert custom profile image</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="profileImgForm">
+                    <input class="form-control" type="text" placeholder="Image's absolute URL eg. https://stock.com/octopus.jpg" />
+                    <button type="submit" hidden />
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="profileImgFormBtn" type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+        const profileImgForm = document.getElementById("profileImgForm");
+        const profileImgFormBtn = document.getElementById("profileImgFormBtn");
+
+        profileImgForm.addEventListener("submit", editProfileImg);
+        profileImgFormBtn.addEventListener("click", editProfileImg);
+        })
+    </script>
+    {% endif %}
+    
     <script>
     document.addEventListener("DOMContentLoaded", () => {
         const [currentPage, setCurrentPage] = useState(1);

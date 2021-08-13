@@ -96,13 +96,11 @@ class PostsAPI(View):
             return JsonResponse({"error": "Post does not exist"}, status=404)
 
 
-# ---------------------------------------------------------
-
-
 class FollowersAPI(View):
     @method_decorator(login_required)
     def get(self, request):
         pass
+
 
 class FollowerAPI(View):
     @method_decorator(login_required)
@@ -146,11 +144,11 @@ class UpvotesAPI(View):
             user_likes_this=False
             # prevent user from liking his own post
             if request.user.id != post.author.id:
-                post_likes=post.upvotes_set.all()
+                post_likes=post.likes.all()
                 # check if like from this user does not exist already
                 if not post_likes.filter(post=post_id, user=request.user.id).exists():
                     # finally, create like
-                    post.upvotes_set.create(user=request.user)
+                    post.likes.create(user=request.user)
                     number_of_likes=post_likes.count()
                     user_likes_this=True
                     return JsonResponse({"msg": "Success", "userLikesThis": user_likes_this, "numberOfLikes": number_of_likes })
@@ -169,7 +167,7 @@ class UpvotesAPI(View):
         post=get_object_or_false(post_id, Posts)
         # first check if such post exists
         if post is not False:
-            post_likes=post.upvotes_set.all()
+            post_likes=post.likes.all()
             # check if like from this user does exist already
             if post_likes.filter(post=post_id, user=request.user.id).exists():
                 # finally, delete like

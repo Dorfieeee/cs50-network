@@ -1,9 +1,6 @@
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
-from django.db.models import Count
-from django.urls import reverse
-from django.utils.formats import date_format
+from .models import Posts, Upvotes
 
-from .models import Posts, Upvotes, Followers
 
 def get_posts(user, *args, **kwargs):
     following_only = kwargs.get("following_only", False)
@@ -12,60 +9,55 @@ def get_posts(user, *args, **kwargs):
 
     if not id:
         queryList = Posts.objects.order_by(
-            '-created').annotate(number_of_likes=Count("upvotes"))
+            '-created')
         if following_only:
             queryList = queryList.filter(author__followers__follower=user)
         if single_user:
             queryList = queryList.filter(author__username__exact=single_user)
     else:
-        queryList = Posts.objects.filter(pk=id).annotate(number_of_likes=Count("upvotes"))
+        queryList = Posts.objects.filter(pk=id)
 
-
-    user_liked_posts = [like.post for like in Upvotes.objects.filter(user=user)]
+    user_liked_posts = [
+        like.post for like in Upvotes.objects.filter(user=user)]
     posts = []
 
     for post in queryList:
-        does_user_like_it = post in user_liked_posts
-        is_user_author = post.author == user
-
-        posts.append({
-            "id": post.id,
-            "author": {
-                "id": post.author.id,
-                "username": post.author.username
-            },
-            "body": post.body,
-            "created": {
-                "short": date_format(post.created, "d M"),
-                "long": date_format(post.created, "DATETIME_FORMAT")
-            },
-            "numberOfLikes": post.number_of_likes,
-            "userIsAuthor": is_user_author,
-            "userLikesThis": does_user_like_it,
-            "postURL": reverse("network-api:post-detail-api", args=[post.id]),
-            "likeURL": reverse("network-api:post-like-api", args=[post.id]),
-            "profileURL": "".join(["/", post.author.username]),
-            })
+        _post = post.serialize()
+        _post["userIsAuthor"] = post.author == user
+        _post["userLikesThis"] = post in user_liked_posts
+        posts.append(_post)
 
     return posts
 
+
 def is_valid_or_error(model):
+    '''Returns True if all fields are valid otherwise error'''
     try:
         model.full_clean()
     except ValidationError as e:
         return e
-    
+
     return True
 
+
 def get_object_or_false(pk, model):
+    '''
+    Returns Model object or False
+    '''
     try:
         obj = model.objects.get(pk=pk)
     except ObjectDoesNotExist as e:
         return False
-    
+
     return obj
 
-def parseParams(params):
+
+def parseParams(params: dict) -> str:
+    '''
+    Parses dict key-value pairs into URL query format
+
+    eg. {"page": 1, "recent": True} -> "?page=1&recent=true"
+    '''
     q = ""
     c = 0
     for key in params:
@@ -74,10 +66,9 @@ def parseParams(params):
         else:
             q += "&"
 
-        q += key + "=" + str(params[key])      
+        value = str(params[key]) if not type(
+            params[key]) == "bool" else str(params[key]).lower()
+        q += key + "=" + value
         c += 1
 
     return q
-
-    
-

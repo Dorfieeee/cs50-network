@@ -102,7 +102,7 @@ async function submitNewPost(e) {
 
     const postBody = document.getElementById("postBody");
 
-    // silently abort
+    // silently abort if "empty string" posted
     if (postBody.value === "") return;
 
     const response = await fetch("api/posts/", {
@@ -123,7 +123,7 @@ async function submitNewPost(e) {
 }
 
 function PostCard(post) {
-    let card, row, avatarCol, avatar, contentCol;
+    let card, row, avatarCol, avatar, contentCol, avatarLink;
 
     card = document.createElement("div");
     card.classList.add("card");
@@ -136,10 +136,24 @@ function PostCard(post) {
     avatarCol.classList.add("col-auto", "d-flex", "justify-content-center");
     avatarCol.style.width = "4em";
 
-    avatar = document.createElement("i");
-    avatar.classList.add("fas", "fa-user-circle", "fa-3x", "my-2");
+    avatarLink = document.createElement("a");
+    avatarLink.href = post.profileURL;
+    avatarLink.classList.add("card-avatar", "link-secondary")
 
-    avatarCol.append(avatar);
+    if (post.author.avatar) {
+        avatar = document.createElement("img");
+        avatar.src = post.author.avatar;
+        avatar.classList.add("rounded-circle", "my-2");
+        avatar.width = "45";
+        avatar.height = "45";
+        avatar.alt = post.author.username + "'s profile picture";
+    } else {
+        avatar = document.createElement("i");
+        avatar.classList.add("fas", "fa-user-circle", "fa-3x");
+    }
+
+    avatarLink.append(avatar);
+    avatarCol.append(avatarLink);
 
     contentCol = document.createElement("div");
     contentCol.classList.add("col", "px-2");
@@ -493,8 +507,8 @@ async function loadPosts(currPage, setCurrPage, params, url) {
 async function followUser(e) {
     let action = e.target.dataset.action;
     let username = e.target.dataset.username;
-    console.log(action, username);
-    let method = action === "follow" ? "POST" : action === "unfollow" ? "DELETE" : "";
+    let method =
+        action === "follow" ? "POST" : action === "unfollow" ? "DELETE" : "";
     if (!method || !username) return;
 
     let response = await fetch("api/followers/" + username + "/", {
@@ -505,9 +519,37 @@ async function followUser(e) {
             "Content-Length": "0", // no body to be sent
             "X-CSRFToken": Cookies.get("csrftoken"),
         },
-    })
+    });
 
     if (response.ok) {
         location.reload();
+    }
+}
+
+async function editProfileImg(e) {
+    let response, responseData, imgUrl;
+    
+    e.preventDefault();
+
+    imgUrl = document.querySelector("#profileImgForm > input").value;
+
+    response = await fetch(location.pathname + "/" + "image", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": Cookies.get("csrftoken"),
+        },
+        body: JSON.stringify({
+            "avatarUrl": imgUrl,
+        }),
+    })
+
+    responseData = await response.json();
+
+    if (response.ok) {
+        location.reload();
+    } else {
+        // show error messages
+        console.log(responseData);
     }
 }

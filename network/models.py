@@ -32,7 +32,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=CASCADE, primary_key=True)
     slug = models.SlugField("profile url")
     dob = models.DateTimeField('date of birth', null=True, blank=True)
-    avatar_slug = models.SlugField("profile img url", null=True, blank=True)
+    avatar_url = models.URLField("profile img url", null=True, blank=True)
 
     def __str__(self) -> str:
         return self.user.email
@@ -50,16 +50,41 @@ class Posts(models.Model):
     author = models.ForeignKey(User, on_delete=CASCADE)
     body = models.TextField(max_length=1000, blank=False)
     created = models.DateTimeField('date created', auto_now_add=True)
-    #edited = models.DateTimeField('date edited', auto_now=True)
+    edited = models.DateTimeField('date edited', auto_now=True, blank=True, null=True)
 
     def __str__(self) -> str:
         return self.author.username + " @ [" + date_format(self.created, "DATETIME_FORMAT") + "]"
+
+    def serialize(self) -> dict:
+        '''Transforms Post model into JSON object'''
+        post = {}
+
+        post["id"] = self.id
+        post["author"] = {
+            "id": self.author.id,
+            "username": self.author.username,
+            "avatar": self.author.profile.avatar_url,
+        }
+        post["body"] = self.body
+        post["created"] = {
+            "short": date_format(self.created, "d M"),
+            "long": date_format(self.created, "DATETIME_FORMAT"),
+        }
+        post["numberOfLikes"] = self.likes.count()
+        post["postURL"] = reverse("network-api:post-detail-api", args=[self.id])
+        post["likeURL"] = reverse("network-api:post-like-api", args=[self.id])
+        post["profileURL"] = reverse("network:profile-detail", args=[self.author.profile.slug])
+        
+        return post
+
+    def number_of_likes(self) -> int:
+        return self.likes.count()
 
 
 class Upvotes(models.Model):
     # Any user can upvote any post
     user = models.ForeignKey(User, on_delete=CASCADE)
-    post = models.ForeignKey(Posts, on_delete=CASCADE)
+    post = models.ForeignKey(Posts, on_delete=CASCADE, related_name="likes")
     created = models.DateTimeField('date created', auto_now_add=True)
 
     def __str__(self) -> str:

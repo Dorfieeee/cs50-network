@@ -51,13 +51,14 @@
                         style="display: inline-block"
                         href="/{{ user.username }}"
                     >
-                        {% if user.profile.avatar_slug %}
+                        {% if user.profile.avatar_url %}
                         <img
                             style="display: inline-block"
-                            src="{{ user.profile.avatar_slug }}"
-                            width="45px"
-                            height="45px"
+                            src="{{ user.profile.avatar_url }}"
+                            width="25px"
+                            height="25px"
                             alt="{{ user.username }}'s profile picture"
+                            class="rounded-circle"
                         />
                         {% else %}
                         <i class="fas fa-user-circle fa-lg"></i>
